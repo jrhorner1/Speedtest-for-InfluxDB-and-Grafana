@@ -1,3 +1,4 @@
+import configure
 import argparse
 
 from influxspeedtest.InfluxdbSpeedtest import InfluxdbSpeedtest
