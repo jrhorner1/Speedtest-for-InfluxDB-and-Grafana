@@ -1,0 +1,66 @@
+# Default values for speedtest.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: jrhorner/speedtest
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: speedtest.local
+      paths: []
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+autoscaling:
+  enabled: false
+
+# Application settings:
+influxdb:
+  address: "influxdb.default" # Influxdb server
+  port: "8086"  # Influxdb server port
+  database: "speedtests" # Database to write collected stats to
+  username: "admin" # User that has access to the database
+  password: "admin" # Password for above user
+  verify_ssl: "False"
+speedtest:
+  delay: "300"  # Delay between runs
+  server: ""  # Comma separated list of servers. Leave blank for auto
+logging:  
+  level: "info"   # Set how verbose the console output is
+  # Valid Options: critical, error, warning, info, debug
