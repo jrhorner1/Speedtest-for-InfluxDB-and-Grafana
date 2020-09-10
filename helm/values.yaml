@@ -57,7 +57,9 @@ influxdb:
   database: "speedtests" # Database to write collected stats to
   username: "admin" # User that has access to the database
   password: "admin" # Password for above user
-  verify_ssl: "False"
+  ssl:
+    enabled: "False"
+    verify: "False"
 speedtest:
   delay: "300"  # Delay between runs
   server: ""  # Comma separated list of servers. Leave blank for auto

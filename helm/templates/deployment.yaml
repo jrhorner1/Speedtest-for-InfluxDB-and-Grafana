@@ -36,8 +36,10 @@ spec:
               value: "{{ .Values.influxdb.username }}"
             - name: INFLUX_PASS
               value: "{{ .Values.influxdb.password }}"
-            - name: INFLUX_VERIFYSSL
-              value: "{{ .Values.influxdb.verify_ssl }}"
+            - name: INFLUX_SSL_ENABLED
+              value: "{{ .Values.influxdb.ssl.enabled }}"
+            - name: INFLUX_SSL_VERIFY
+              value: "{{ .Values.influxdb.ssl.verify }}"
             - name: TEST_DELAY
               value: "{{ .Values.speedtest.delay }}"
             - name: TEST_SERVER
