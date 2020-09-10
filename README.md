@@ -5,83 +5,63 @@
 
 This tool is a wrapper for speedtest-cli which allows you to run periodic speedtets and save the results to Influxdb 
 
-## Configuration within config.ini
+## Configuration within config.yml
 
-#### GENERAL
-|Key            |Description                                                                                                         |
-|:--------------|:-------------------------------------------------------------------------------------------------------------------|
-|Delay          |Delay between runs                                                                                                  |
-#### INFLUXDB
-|Key            |Description                                                                                                         |
-|:--------------|:-------------------------------------------------------------------------------------------------------------------|
-|Address        |Delay between updating metrics                                                                                      |
-|Port           |InfluxDB port to connect to.  8086 in most cases                                                                    |
-|Database       |Database to write collected stats to                                                                                |
-|Username       |User that has access to the database                                                                                |
-|Password       |Password for above user                                                                                             |
-#### SPEEDTEST
-|Key            |Description                                                                                                         |
-|:--------------|:-------------------------------------------------------------------------------------------------------------------|
-|Server         |Comma sperated list of servers.  Leave blank for auto                                                            |
-#### LOGGING
-|Key            |Description                                                                                                         |
-|:--------------|:-------------------------------------------------------------------------------------------------------------------|
-|Level          |Set how verbose the console output is                                                           |
-
-
+|Key                     |Default    |Description                                           |
+|:-----------------------|:----------|:-----------------------------------------------------|
+|influxdb.address        |influxdb   |HTTP address of the influxdb server                   |
+|influxdb.port           |8086       |Listening port of the influxdb server                 |
+|influxdb.database       |speedtests |Database to write collected stats to                  |
+|influxdb.username       |           |User that has access to the database                  |
+|influxdb.password       |           |Password for above user                               |
+|influxdb.ssl.enabled    |False      |                                                      |
+|influxdb.ssl.verify     |False      |                                                      |
+|speedtest.server        |           |Comma separated list of servers. Leave blank for auto |
+|speedtest.interval      |300        |Delay between runs                                    |
+|logging.level           |info       |Valid Options: critical, error, warning, info, debug  |
 
 ## Usage
 
-Before the first use run pip3 install -r requirements.txt
+### Build
 
-Enter your desired information in config.ini 
-
-Run influxspeedtest.py
-
-**Custom Config File Name**
-
-If you wish to use a config file by a different name set an ENV Variable called influxspeedtest.  The value you set will be the config file that's used. 
-  
-
-***Requirements***
-
-Python 3+
-
-You will need the influxdb library installed to use this - [Found Here](https://github.com/influxdata/influxdb-python)
-You will need the speedtest-cli library installed to use this - [Found Here](https://github.com/sivel/speedtest-cli)
-
-## Docker Setup
-
-1. Install [Docker](https://www.docker.com/)
-
-2. Make a directory to hold the config.ini file. Navigate to that directory and download the sample config.ini in this repo.
 ```bash
-mkdir speedtest
-curl -o speedtest/config.ini https://raw.githubusercontent.com/barrycarey/Speedtest-for-InfluxDB-and-Grafana/master/config.ini
-cd speedtest
+docker build . -t speedtest:latest
 ```
 
-3. Modify the config file with your influxdb settings.
+### Docker Compose
+
+The included docker-compose file should be every needed to get going fast. Make sure to build the project first, then run the following:
 ```bash
-nano config.ini
+docker-compose up
 ```
-Modify the 'Address =' line include the ip or hostname of your influxdb instance.
-Example:
-```bash
-Address = 10.13.14.200
+Access Grafana at `http://localhost:3000` and login with the default username: `admin` and password: `admin`. You will be prompted to change the password.
+
+### Helm
+
+For deploying to a kubernetes cluster. Create a my-values.yml file and update any values as you see fit.
+
+my-values.yml 
+```yaml
+image:
+  repository: speedtest:latest # Local image that you build earlier
+# Application settings:
+influxdb:
+  address: "influxdb.default" # Influxdb server
+  port: "8086"  # Influxdb server port
+  database: "speedtests" # Database to write collected stats to
+  username: "admin" # User that has access to the database
+  password: "admin" # Password for above user
+  ssl:
+    enabled: "False"
+    verify: "False"
+speedtest:
+  delay: "300"  # Delay between runs
+  server: ""  # Comma separated list of servers. Leave blank for auto
+logging:  
+  level: "info" # Valid Options: critical, error, warning, info, debug
 ```
 
-4. Run the container, pointing to the directory with the config file. This should now pull the image from Docker hub. You can do this by either running docker run or by using docker-compose.
- 1. The docker run option.
+
 ```bash
-docker run -d \
---name="speedtest" \
--v config.ini:/src/config.ini \
---restart="always" \
-barrycarey/speedtest-for-influxdb-and-grafana
+helm install my-app . -f my-values.yml -n my-namespace
 ```
- 2. The docker-compose option
- ```bash
- curl -O https://raw.githubusercontent.com/barrycarey/Speedtest-for-InfluxDB-and-Grafana/master/docker-compose.yml docker-compose.yml
- docker-compose up -d
- ```
