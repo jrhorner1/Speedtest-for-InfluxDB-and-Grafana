@@ -83,6 +83,8 @@ class InfluxdbSpeedtest():
 
         self.results = self.speedtest.results
 
+        log.debug('')
+
     def send_results(self):
         """
         Formats the payload to send to InfluxDB
@@ -96,12 +98,32 @@ class InfluxdbSpeedtest():
                 'fields': {
                     'download': result_dict['download'],
                     'upload': result_dict['upload'],
-                    'ping': result_dict['server']['latency']
+                    'ping': result_dict['ping'],
+                    'bytes_sent': result_dict['bytes_sent'],
+                    'bytes_received': result_dict['bytes_received']
                 },
                 'tags': {
-                    'server': result_dict['server']['id'],
+                    'client_ip': result_dict['client']['ip'],
+                    'client_lat': result_dict['client']['lat'],
+                    'client_lon': result_dict['client']['lon'],
+                    'client_isp': result_dict['client']['isp'],
+                    'client_isprating': result_dict['client']['isprating'],
+                    'client_rating': result_dict['client']['rating'],
+                    'client_rating': result_dict['client']['rating'],
+                    'client_ispdlavg': result_dict['client']['ispdlavg'],
+                    'client_ispulavg': result_dict['client']['ispulavg'],
+                    'client_loggedin': result_dict['client']['loggedin'],
+                    'client_country': result_dict['client']['country'],
+                    'server_url': result_dict['server']['url'],
+                    'server_lat': result_dict['server']['lat'],
+                    'server_lon': result_dict['server']['lon'],
                     'server_name': result_dict['server']['name'],
-                    'server_country': result_dict['server']['country']
+                    'server_country': result_dict['server']['country'],
+                    'server_cc': result_dict['server']['cc'],
+                    'server_id': result_dict['server']['id'],
+                    'server_host': result_dict['server']['host']#,
+                    #'server_d': result_dict['server']['d'],
+                    #'server_latency': result_dict['server']['latency']
                 }
             }
         ]
@@ -131,13 +153,15 @@ class InfluxdbSpeedtest():
         self.speedtest.download()
         log.info('Starting upload test')
         self.speedtest.upload()
+        log.info('POST data to the speedtest.net API to obtain a share results link')
+        log.info('%s', self.speedtest.results.share())
         self.send_results()
 
         results = self.results.dict()
         log.info('Download: %sMbps - Upload: %sMbps - Latency: %sms',
                  round(results['download'] / 1000000, 2),
                  round(results['upload'] / 1000000, 2),
-                 results['server']['latency']
+                 results['ping']
                  )
 
 

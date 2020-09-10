@@ -1,8 +1,31 @@
-version: '2'
+version: '3.8'
 services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    environment:
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+
   speedtest:
-    image: barrycarey/speedtest-for-influxdb-and-grafana
+    image: speedtest:latest
     container_name: speedtest
-    volumes:
-      - ./config.ini:/src/config.ini
+    environment:
+      - INFLUX_ADDR=influxdb
+      - INFLUX_PORT=8086
+      - INFLUX_DB=speedtests
+      - INFLUX_USER=admin
+      - INFLUX_PASS=admin
+      - INFLUX_VERIFYSSL=False
+      - TEST_DELAY=300
+      - TEST_SERVER=
+      - LOG_LEVEL=debug
+    depends_on: 
+      - influxdb
     restart: always

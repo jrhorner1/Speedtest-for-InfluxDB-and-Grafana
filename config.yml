@@ -1,0 +1,17 @@
+
+influxdb:
+  address:
+  port: 8086
+  database: speedtests
+  username:
+  password:
+  ssl:
+    enabled: False
+    verify: False
+
+speedtest:
+  server: # Leave blank to auto pick server
+  interval: 300
+
+logging:
+  level: info # Valid Options: critical, error, warning, info, debug

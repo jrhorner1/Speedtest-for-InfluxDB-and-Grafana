@@ -2,9 +2,9 @@ import os
 
 from influxspeedtest.config.configmanager import ConfigManager
 
-if os.getenv('influxspeedtest'):
-    config = os.getenv('influxspeedtest')
+if os.getenv('speedtest_config'):
+    config = os.getenv('speedtest_config')
 else:
-    config = 'config.ini'
+    config = 'config.yml'
 
 config = ConfigManager(config)

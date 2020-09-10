@@ -12,7 +12,7 @@ ENV TEST_SERVER=""
 ENV LOG_LEVEL="info"
 
 VOLUME /src/
-COPY influxspeedtest.py requirements.txt config.ini configure.py /src/
+COPY influxspeedtest.py requirements.txt config.yml configure.py /src/
 ADD influxspeedtest /src/influxspeedtest
 WORKDIR /src
 
